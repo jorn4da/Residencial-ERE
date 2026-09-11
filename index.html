@@ -135,6 +135,8 @@ header.scrolled{background:rgba(28,26,22,.94);backdrop-filter:blur(10px);padding
 .concept .txt h2{font-size:3rem;margin-bottom:18px}
 .concept .txt p{color:var(--taupe);margin-bottom:16px;font-size:1.05rem}
 .concept .img{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);aspect-ratio:4/5}
+.concept .img.filme{aspect-ratio:16/9}
+.concept .img.filme video{object-fit:cover;background:#000;cursor:pointer}
 .concept .img img,.concept .img video{width:100%;height:100%;object-fit:cover;display:block}
 .pull{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.6rem;color:var(--bronze);line-height:1.3;border-left:2px solid var(--bronze);padding-left:20px;margin:22px 0}
 
@@ -368,7 +370,7 @@ footer a:hover{color:#fff}
       <div class="pull">"Um endereço para quem reconhece valor onde a cidade está renascendo."</div>
       <p>Um projeto de mix diversificado, com 494 unidades, do studio ao 3 quartos ponta premium, pensado para quem quer viver bem — e para quem enxerga aqui uma das melhores oportunidades de patrimônio do Rio.</p>
     </div>
-    <div class="img"><video id="conceitoVideo" autoplay muted loop playsinline preload="auto" poster="assets/img/conceito-poster.jpg"><source src="assets/video/conceito-web.mp4" type="video/mp4" /></video></div>
+    <div class="img filme"><video id="conceitoFilme" controls playsinline preload="metadata" poster="assets/img/conceito-poster-filme.jpg"><source src="assets/ere-filme.mp4" type="video/mp4" /></video></div>
   </div>
 </section>
 
