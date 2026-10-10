@@ -3,5 +3,5 @@ PESQUISA-PUBLICO-ALVO-ERE.md
 PUBLICAR-ERE.command
 Filme_*.mp4
 Anima*.mp4
-*.bak
-*.bak2
+*.bak*
+_cmp-*

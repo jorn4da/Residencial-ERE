@@ -686,6 +686,14 @@ function postLead(payload){
     catch(e2){ if(navigator.sendBeacon){ try{ navigator.sendBeacon(SHEET_WEBHOOK,new Blob([sb],{type:'text/plain'})); }catch(_){} } }
   }
 }
+// Página de obrigado: guarda o lead na sessão (sem dados pessoais na URL) e redireciona.
+// O Pixel (Lead) e o GA4 (generate_lead) disparam em obrigado.html, que depois abre o WhatsApp.
+function irObrigado(origem,nome,msg){
+  var id='lead_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+  try{ sessionStorage.setItem('ty_lead',JSON.stringify({id:id,origem:origem,nome:nome,msg:msg,ts:Date.now()})); }catch(e){}
+  var slug=String(origem||'pagina').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  setTimeout(function(){ location.href='obrigado.html?origem='+encodeURIComponent(slug); },150);
+}
 function abrirWhats(link){ var w=null; try{ w=window.open(link,'_blank'); }catch(e){} if(!w){ location.href=link; } }
 
 // Operadora + validação
@@ -718,17 +726,11 @@ function enviarLead(e){
   if(nome.split(/\s+/).filter(Boolean).length<2){ ne.classList.add('invalid'); ok=false; } else { ne.classList.remove('invalid'); }
   if(!foneValido(whats)){ fe.classList.add('invalid'); ok=false; } else { fe.classList.remove('invalid'); fe.classList.add('valid'); }
   if(!ok){ (ne.classList.contains('invalid')?ne:fe).focus(); return false; }
-  if(window.fbq) fbq('track','Lead');
-  if(window.gtag) gtag('event','generate_lead',{origem:'Formulário Hero'});
-  if(window.dataLayer) dataLayer.push({event:'generate_lead',form_origin:'hero'});
+  if(window.dataLayer) dataLayer.push({event:'form_submit',form_origin:'hero'});
   var agora=new Date().toLocaleString('pt-BR');
   postLead({_subject:'Novo lead Erê: '+nome, Nome:nome, WhatsApp:whats, Operadora:operadora(whats)||'não identificada', Interesse:tipo, Empreendimento:EMP, 'Recebido em':agora, Origem:location.href});
   var msg='Olá! Vi a página do *'+EMP+'* e quero as condições. Meu nome é *'+nome+'*, WhatsApp '+whats+' e tenho interesse em: '+tipo+'.';
-  var link='https://wa.me/'+WPP_NUMBER+'?text='+encodeURIComponent(msg);
-  var inner=document.getElementById('form-inner'), okBox=document.getElementById('form-ok');
-  if(inner) inner.style.display='none';
-  if(okBox){ okBox.style.display='block'; var b=okBox.querySelector('[data-wpp]'); if(b) b.setAttribute('href',link); }
-  abrirWhats(link);
+  irObrigado('Formulário Hero',nome,msg);
   return false;
 }
 
@@ -773,8 +775,8 @@ document.getElementById('wppForm').addEventListener('submit',function(e){
   var agora=new Date().toLocaleString('pt-BR');
   postLead({_subject:'Novo lead Erê: '+nome, Nome:nome, WhatsApp:whats, Operadora:operadora(whats)||'não identificada', Interesse:(tipo||WPP_ORIGEM), Empreendimento:EMP, 'Recebido em':agora, Origem:location.href});
   var msg='Olá! Vi a página do *'+EMP+'* e quero as condições. Meu nome é *'+nome+'*, WhatsApp '+whats+(tipo?(' e interesse em '+tipo):'')+'. (Origem: '+WPP_ORIGEM+')';
-  abrirWhats('https://wa.me/'+WPP_NUMBER+'?text='+encodeURIComponent(msg));
   closeWppModal();
+  irObrigado(WPP_ORIGEM,nome,msg);
 });
 </script>
 </body>
